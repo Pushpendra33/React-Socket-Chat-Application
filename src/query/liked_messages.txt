@@ -1,0 +1,23 @@
+//Trigger Name: update_like_count_after_delete
+//Table: liked_messages
+//Time: AFTER
+//Event: DELETE
+
+CREATE TRIGGER `update_like_count_after_delete` AFTER DELETE ON `liked_messages`
+ FOR EACH ROW BEGIN
+DECLARE likeCount integer;
+SELECT COUNT(id) INTO likeCount from `liked_messages` WHERE message_id=OLD.message_id;
+UPDATE `messages` SET like_count=likeCount WHERE id=OLD.message_id;
+END
+
+//Trigger Name: update_like_count_after_insert
+//Table: liked_messages
+//Time: AFTER
+//Event: INSERT
+
+CREATE TRIGGER `update_like_count_after_insert` AFTER INSERT ON `liked_messages`
+ FOR EACH ROW BEGIN
+DECLARE likeCount integer;
+SELECT COUNT(id) INTO likeCount from `liked_messages` WHERE message_id=NEW.message_id;
+UPDATE `messages` SET like_count=likeCount WHERE id=NEW.message_id;
+END

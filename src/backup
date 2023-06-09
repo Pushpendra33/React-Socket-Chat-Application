@@ -1,0 +1,644 @@
+//User 1
+user_id: 12
+session_id: J9ZWFI40E8
+device_token : kijzv5wu2-a3i6x2xzrjqkxy-2y7gn3
+device_type : Android
+recovery_phrase : ketchup keep tone frost despair guess chunk once inside elevator end black
+group_id : 22
+
+//USER 2
+user_id: 13
+session_id: X7KAHQL8SB
+device_token : hxh9596m-cv1hr8j4pbf-tj2dqlz37iu
+device_type : ios
+recovery_phrase :entry episode impact scorpion always morning climb allow coach jungle between unveil
+
+//USER 3
+user_id: 14
+session_id: HVJTUY4GAR
+device_token : nvd84xxyy-diw4k3g1gz-elle38kmk3f
+device_type : Android
+recovery_phrase : tone chunk impact elevator end guess tone frost despair  jungle morning climb
+
+
+//USER 4 
+ "user_id": 15,
+ "session_id": "udq20g1ghz",
+ "device_token": "b6q1lkoh8pdmr0xisg2yavu37njz9e",
+ "device_type": "IOS",
+ "recovery_phrase": "Mashup bone appear bass frontal bunk outside sheep always generator and yellow"
+
+//USER 5
+id: 16
+1
+pd3ugojk8t
+c9-kwoyxlf1d0vmea62sjpurg8iht4q
+Web
+ketchup keep tone frost despair guess chunk once inside elevator end black
+
+/////////
+id:17
+6iesxfqocz
+hugt68j7my24czaqk9-nvb3lwfrdo1i
+Android
+tone champ impact elevating and guess tonned frosting despair jungle morning men
+
+group_id: 30
+members:17 and 16
+
+//Testing Users
+{
+    "id": 19,
+	"device_token": "zhxm-8ay3bcutoig745pjs-dvwl902f"
+    "session_id": "XQH7DNPGL2M83VB65RCU",
+	device_type : Web
+    "name": "Testing User 1",
+    "recovery_phrase": "paper ordinary weakness relationship boom win dome density look majority know appointment",  
+    "created_at": "2022-08-30T05:31:02.000Z",
+    "updated_at": "2022-08-30T05:31:02.000Z"
+}
+
+////testing@semidot 
+206: abbdc361-c5ff-37e1-8e39-fd33632bff8f
+218: db78612f-bcb5-3384-80fc-224ef45b23d0
+
+///////////////////////////////////////////////////////////////////////////////////////
+//combined conversations
+SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, receiver.id as receiver_id, '' as group_id, receiver.name as receiver_name , '' as group_name, '' as group_status, receiver.is_online as receiver_is_online, receiver.is_chat_screen as receiver_is_chat_screen, '' as group_is_chat_screen, receiver.profile_image as receiver_profile_image, '' as total_members_in_group 
+FROM conversations as c
+INNER JOIN `users` as sender ON(sender.id=c.from_user_id)
+INNER JOIN `users` as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='0'
+UNION ALL
+SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image,'' as receiver_id,receiver.id as group_id, '' as receiver_name, receiver.name as group_name, receiver.status as group_status, '' as receiver_is_online, '' as receiver_is_chat_screen, receiver.is_chat_screen as group_is_chat_screen, '' as receiver_profile_image, receiver.total_members as total_members_in_group
+FROM `conversations` as c
+INNER JOIN `users` as sender ON(sender.id=c.from_user_id)
+INNER JOIN `groups` as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='1';
+
+
+////view for combine_conversations////
+CREATE OR REPLACE VIEW combine_conversations AS SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, receiver.id as receiver_id, '' as group_id, receiver.name as receiver_name , '' as group_name, '' as group_status, receiver.is_online as receiver_is_online, receiver.is_chat_screen as receiver_is_chat_screen, '' as group_is_chat_screen, receiver.profile_image as receiver_profile_image, '' as total_members_in_group 
+FROM conversations as c
+INNER JOIN `users` as sender ON(sender.id=c.from_user_id)
+INNER JOIN `users` as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='0'
+UNION ALL
+SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image,'' as receiver_id,receiver.id as group_id, '' as receiver_name, receiver.name as group_name, receiver.status as group_status, '' as receiver_is_online, '' as receiver_is_chat_screen, receiver.is_chat_screen as group_is_chat_screen, '' as receiver_profile_image, receiver.total_members as total_members_in_group
+FROM `conversations` as c
+INNER JOIN `users` as sender ON(sender.id=c.from_user_id)
+INNER JOIN `groups` as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='1';
+
+
+
+
+///grouplast single message////
+SELECT m.id as message_id, m.message, m.type as message_type, m.is_read, m.created_at as message_created_at, m.updated_at as message_updated_at, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, g.id as group_id, g.name as group_name, g.created_by as group_created_by, g.total_members, g.status as group_status, c.is_group_conversation, c.order_by from messages as m
+INNER JOIN `conversations` as c ON (c.id=m.conversation_id)
+INNER JOIN `users` as sender ON(sender.id = m.from_user_id)
+INNER JOIN `groups` as g ON(g.id = m.to_user_id)
+WHERE m.to_user_id=27 AND c.is_group_conversation='1' ORDER BY m.id DESC LIMIT 1;
+
+
+///o2o last single message///
+SELECT m.id as message_id, m.message, m.type as message_type, m.is_read, m.created_at as message_created_at, m.updated_at as message_updated_at, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, receiver.id as receiver_id, receiver.name as receiver_name, receiver.is_online as receiver_is_online, receiver.is_chat_screen as receiver_is_chat_screen, receiver.profile_image as receiver_profile_image, c.is_group_conversation, c.order_by from messages as m
+INNER JOIN conversations as c ON (c.id=m.conversation_id)
+INNER JOIN users as sender ON(sender.id = m.from_user_id)
+INNER JOIN users as receiver ON(receiver.id=m.to_user_id)
+WHERE ((m.from_user_id='17' OR m.to_user_id='17') AND (m.to_user_id='12' OR m.from_user_id='12')) AND c.is_group_conversation='0' ORDER BY m.id DESC LIMIT 1;
+
+
+//////combined message
+CREATE OR REPLACE VIEW combine_messages AS SELECT m.id as message_id, m.message, m.type as message_type, m.is_read, m.created_at as message_created_at, m.updated_at as message_updated_at, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, receiver.id as receiver_id,'' as group_id, receiver.name as receiver_name, '' as group_name, receiver.is_online as receiver_is_online, '' as group_created_by,receiver.is_chat_screen as receiver_is_chat_screen, '' as total_members, receiver.profile_image as receiver_profile_image, '' as group_status, c.id as conversation_id, c.is_group_conversation, c.order_by from messages as m
+INNER JOIN conversations as c ON (c.id=m.conversation_id)
+INNER JOIN users as sender ON(sender.id = m.from_user_id)
+INNER JOIN users as receiver ON(receiver.id=m.to_user_id)
+WHERE c.is_group_conversation='0'
+UNION ALL
+SELECT m.id as message_id, m.message, m.type as message_type, m.is_read, m.created_at as message_created_at, m.updated_at as message_updated_at, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image,'' as receiver_id, g.id as group_id,'' as receiver_name, g.name as group_name,'' as receiver_is_online, g.created_by as group_created_by, '' as receiver_is_chat_screen, g.total_members, '' as receiver_profile_image, g.status as group_status, c.id as conversation_id, c.is_group_conversation, c.order_by from messages as m
+INNER JOIN `conversations` as c ON (c.id=m.conversation_id)
+INNER JOIN `users` as sender ON(sender.id = m.from_user_id)
+INNER JOIN `groups` as g ON(g.id = m.to_user_id)
+WHERE c.is_group_conversation='1';
+
+
+
+///////last message////////
+SELECT * FROM `combine_messages` WHERE ((sender_id='17' OR receiver_id='17') AND (sender_id='12' OR receiver_id='12')) AND is_group_conversation='0' ORDER BY message_id DESC LIMIT 1;
+
+////last group message/////
+SELECT * FROM `combine_messages` WHERE group_id='27'AND is_group_conversation='1' ORDER BY message_id DESC LIMIT 1;
+
+////all group message
+SELECT * FROM `combine_messages` WHERE group_id='27'AND is_group_conversation='1' ORDER BY message_id DESC;
+
+/////all single message
+SELECT id as message_id,message,from_user_id as sender_id,to_user_id as receiver_id FROM `messages` WHERE ((from_user_id='17' OR to_user_id='17') AND (from_user_id='12' OR to_user_id='12')) ORDER BY id DESC;
+
+
+///////combine_conversations with profile_image updated////////
+CREATE OR REPLACE VIEW combine_conversations AS SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, receiver.id as receiver_id, '' as group_id, receiver.name as receiver_name , '' as group_name, '' as group_status, receiver.is_online as receiver_is_online, receiver.is_chat_screen as receiver_is_chat_screen, '' as group_is_chat_screen, receiver.profile_image as receiver_profile_image, '' as group_profile_image, '' as total_members_in_group 
+FROM `conversations` as c
+INNER JOIN `users` as sender ON(sender.id=c.from_user_id)
+INNER JOIN `users` as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='0'
+UNION ALL
+SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image,receiver.id as receiver_id,receiver.id as group_id, receiver.name as receiver_name, receiver.name as group_name, receiver.status as group_status, '' as receiver_is_online, '' as receiver_is_chat_screen, receiver.is_chat_screen as group_is_chat_screen, receiver.group_profile_image as receiver_profile_image, receiver.group_profile_image, receiver.total_members as total_members_in_group
+FROM `conversations` as c
+INNER JOIN `users` as sender ON(sender.id=c.from_user_id)
+INNER JOIN `groups` as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='1';
+
+//////unread count 
+SELECT COUNT(message_id) FROM combine_messages WHERE is_read<='0' AND group_id='27' ORDER BY message_id DESC;
+
+
+///////// updated conversation view 10 oct ///////
+CREATE OR REPLACE VIEW combine_conversations AS SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.session_id as sender_session_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image, receiver.id as receiver_id, receiver.session_id as receiver_session_id, '' as group_id, receiver.name as receiver_name , '' as group_name, '' as group_status, receiver.is_online as receiver_is_online, receiver.is_chat_screen as receiver_is_chat_screen, '' as group_is_chat_screen, receiver.profile_image as receiver_profile_image, '' as group_profile_image, '' as total_members_in_group 
+FROM conversations as c
+INNER JOIN users as sender ON(sender.id=c.from_user_id)
+INNER JOIN users as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='0'
+UNION ALL
+SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, sender.id as sender_id, sender.session_id as sender_session_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, sender.profile_image as sender_profile_image,receiver.id as receiver_id, '' as receiver_session_id, receiver.id as group_id, receiver.name as receiver_name, receiver.name as group_name, receiver.status as group_status, '' as receiver_is_online, '' as receiver_is_chat_screen, receiver.is_chat_screen as group_is_chat_screen, receiver.group_profile_image as receiver_profile_image, receiver.group_profile_image,receiver.total_members as total_members_in_group
+FROM conversations as c
+INNER JOIN users as sender ON(sender.id=c.from_user_id)
+INNER JOIN groups as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='1';
+
+
+///////////////// latest conversation view by naveen sir oct17 /////////////\
+CREATE OR REPLACE VIEW combine_conversations AS SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, (SELECT COUNT(uc_o.is_read) FROM `messages` AS uc_o WHERE uc_o.conversation_id = c.id AND uc_o.is_read < 1) AS unread_count, sender.id as sender_id, sender.session_id as sender_session_id, sender.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, (SELECT IF(bu_sender.id, '1', '0') FROM `blocked_users` as bu_sender WHERE bu_sender.user_id=receiver.id AND bu_sender.blocked_user_id=sender.id ) as sender_is_blocked, (SELECT IF(bu_sb.user_id, bu_sb.user_id, '-') FROM `blocked_users` as bu_sb WHERE bu_sb.user_id=receiver.id AND bu_sb.blocked_user_id=sender.id ) as sender_blocked_by, sender.profile_image as sender_profile_image, receiver.id as receiver_id, receiver.session_id as receiver_session_id, '' as group_id, receiver.name as receiver_name , '' as group_name, '' as group_status, receiver.is_online as receiver_is_online, receiver.is_chat_screen as receiver_is_chat_screen, '' as group_is_chat_screen, (SELECT IF(bu_receiver.id, '1', '0') FROM `blocked_users` as bu_receiver WHERE bu_receiver.user_id=sender.id AND bu_receiver.blocked_user_id=receiver.id ) as receiver_is_blocked, (SELECT IF(bu_rb.user_id, bu_rb.user_id, '-') FROM `blocked_users` as bu_rb WHERE bu_rb.user_id=sender.id AND bu_rb.blocked_user_id=receiver.id ) as receiver_blocked_by, receiver.profile_image as receiver_profile_image, '' as group_profile_image, '' as total_members_in_group 
+FROM conversations as c
+INNER JOIN users as sender ON(sender.id=c.from_user_id)
+INNER JOIN users as receiver ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='0'
+UNION ALL
+SELECT c.id as conversation_id, c.is_group_conversation, c.order_by as conversation_order_by, (SELECT COUNT(uc_g.is_read) FROM `messages` AS uc_g WHERE uc_g.conversation_id = c.id AND uc_g.is_read < 1) AS unread_count, GM.user_id as sender_id, sender.session_id as sender_session_id, receiver.name as sender_name, sender.is_online as sender_is_online, sender.is_chat_screen as sender_is_chat_screen, '' as sender_is_blocked, '' as sender_blocked_by, sender.profile_image as sender_profile_image,receiver.id as receiver_id, '' as receiver_session_id, receiver.id as group_id, receiver.name as receiver_name, receiver.name as group_name, receiver.status as group_status, '' as receiver_is_online, '' as receiver_is_chat_screen, receiver.is_chat_screen as group_is_chat_screen, '' as receiver_is_blocked, '' as receiver_blocked_by, receiver.group_profile_image as receiver_profile_image, receiver.group_profile_image,receiver.total_members as total_members_in_group
+FROM conversations as c
+INNER JOIN users as sender ON(sender.id=c.from_user_id)
+INNER JOIN (groups as receiver INNER JOIN group_members GM on receiver.id=GM.group_id) ON(receiver.id=c.to_user_id)
+WHERE c.is_group_conversation='1';
+
+
+////Updated queries oct 19////////////////////////////////////////////////////////////////////////////////////////////
+
+//Trigger Name: update_total_count_after_delete
+//Table: group_members
+//Time: AFTER
+//Event: DELETE
+
+CREATE TRIGGER `update_total_count_after_delete` AFTER DELETE ON `group_members`
+ FOR EACH ROW BEGIN
+DECLARE totalCount integer;
+select count(id) INTO totalCount from `group_members` where group_id=OLD.group_id;
+update `groups` set total_members=totalCount where id=OLD.group_id;
+END
+
+//Trigger Name: update_total_count_after_insert
+//Table: group_members
+//Time: AFTER
+//Event: INSERT
+
+CREATE TRIGGER `update_total_count_after_insert` AFTER INSERT ON `group_members`
+ FOR EACH ROW BEGIN 
+DECLARE totalCount integer; select count(id) INTO totalCount from `group_members` where group_id=NEW.group_id;
+update `groups` set total_members=totalCount where id=NEW.group_id; 
+END
+
+
+/////////////////////////////////////////////////
+//Trigger Name: update_like_count_after_delete
+//Table: liked_messages
+//Time: AFTER
+//Event: DELETE
+
+CREATE TRIGGER `update_like_count_after_delete` AFTER DELETE ON `liked_messages`
+ FOR EACH ROW BEGIN
+DECLARE likeCount integer;
+SELECT COUNT(id) INTO likeCount from `liked_messages` WHERE message_id=OLD.message_id;
+UPDATE `messages` SET like_count=likeCount WHERE id=OLD.message_id;
+END
+
+//Trigger Name: update_like_count_after_insert
+//Table: liked_messages
+//Time: AFTER
+//Event: INSERT
+
+CREATE TRIGGER `update_like_count_after_insert` AFTER INSERT ON `liked_messages`
+ FOR EACH ROW BEGIN
+DECLARE likeCount integer;
+SELECT COUNT(id) INTO likeCount from `liked_messages` WHERE message_id=NEW.message_id;
+UPDATE `messages` SET like_count=likeCount WHERE id=NEW.message_id;
+END
+
+///////////////////////////////////////////////////////
+CREATE OR REPLACE VIEW `combine_conversations` AS SELECT
+    `c`.`id` AS `conversation_id`,
+    `c`.`is_group_conversation` AS `is_group_conversation`,
+    `c`.`order_by` AS `conversation_order_by`,
+    (
+    SELECT
+        COUNT(`uc_o`.`is_read`)
+    FROM
+        `messages` `uc_o`
+    WHERE
+        (
+            (`uc_o`.`conversation_id` = `c`.`id`) AND(`uc_o`.`is_read` < 1)
+        )
+) AS `unread_count`,
+`sender`.`id` AS `sender_id`,
+`sender`.`session_id` AS `sender_session_id`,
+`sender`.`name` AS `sender_name`,
+`sender`.`is_online` AS `sender_is_online`,
+`sender`.`is_chat_screen` AS `sender_is_chat_screen`,
+(
+    SELECT
+        IF(`bu_sender`.`id`, '1', '0')
+    FROM
+        `blocked_users` `bu_sender`
+    WHERE
+        (
+            (
+                `bu_sender`.`user_id` = `receiver`.`id`
+            ) AND(
+                `bu_sender`.`blocked_user_id` = `sender`.`id`
+            )
+        )
+) AS `sender_is_blocked`,
+(
+    SELECT
+        IF(
+            `bu_sb`.`user_id`,
+            `bu_sb`.`user_id`,
+            '-'
+        )
+    FROM
+        `blocked_users` `bu_sb`
+    WHERE
+        (
+            (`bu_sb`.`user_id` = `receiver`.`id`) AND(
+                `bu_sb`.`blocked_user_id` = `sender`.`id`
+            )
+        )
+) AS `sender_blocked_by`,
+`sender`.`profile_image` AS `sender_profile_image`,
+`receiver`.`id` AS `receiver_id`,
+`receiver`.`session_id` AS `receiver_session_id`,
+'' AS `group_id`,
+`receiver`.`name` AS `receiver_name`,
+'' AS `group_name`,
+'' AS `group_status`,
+`receiver`.`is_online` AS `receiver_is_online`,
+`receiver`.`is_chat_screen` AS `receiver_is_chat_screen`,
+'' AS `group_is_chat_screen`,
+(
+    SELECT
+        IF(`bu_receiver`.`id`, '1', '0')
+    FROM
+        `blocked_users` `bu_receiver`
+    WHERE
+        (
+            (
+                `bu_receiver`.`user_id` = `sender`.`id`
+            ) AND(
+                `bu_receiver`.`blocked_user_id` = `receiver`.`id`
+            )
+        )
+) AS `receiver_is_blocked`,
+(
+    SELECT
+        IF(
+            `bu_rb`.`user_id`,
+            `bu_rb`.`user_id`,
+            '-'
+        )
+    FROM
+        `blocked_users` `bu_rb`
+    WHERE
+        (
+            (`bu_rb`.`user_id` = `sender`.`id`) AND(
+                `bu_rb`.`blocked_user_id` = `receiver`.`id`
+            )
+        )
+) AS `receiver_blocked_by`,
+`receiver`.`profile_image` AS `receiver_profile_image`,
+'' AS `group_profile_image`,
+'' AS `total_members_in_group`
+FROM
+    (
+        (
+            `conversations` `c`
+        INNER JOIN `users` `sender` ON
+            ((`sender`.`id` = `c`.`from_user_id`))
+        )
+    INNER JOIN `users` `receiver` ON
+        ((`receiver`.`id` = `c`.`to_user_id`))
+    )
+WHERE
+    (`c`.`is_group_conversation` = '0')
+UNION ALL
+SELECT
+    `c`.`id` AS `conversation_id`,
+    `c`.`is_group_conversation` AS `is_group_conversation`,
+    `c`.`order_by` AS `conversation_order_by`,
+    (
+    SELECT
+        COUNT(`uc_g`.`is_read`)
+    FROM
+        `messages` `uc_g`
+    WHERE
+        (
+            (`uc_g`.`conversation_id` = `c`.`id`) AND(`uc_g`.`is_read` < 1)
+        )
+) AS `unread_count`,
+`GM`.`user_id` AS `sender_id`,
+`sender`.`session_id` AS `sender_session_id`,
+`receiver`.`name` AS `sender_name`,
+`sender`.`is_online` AS `sender_is_online`,
+`sender`.`is_chat_screen` AS `sender_is_chat_screen`,
+'' AS `sender_is_blocked`,
+'' AS `sender_blocked_by`,
+`sender`.`profile_image` AS `sender_profile_image`,
+`receiver`.`id` AS `receiver_id`,
+'' AS `receiver_session_id`,
+`receiver`.`id` AS `group_id`,
+`receiver`.`name` AS `receiver_name`,
+`receiver`.`name` AS `group_name`,
+`receiver`.`status` AS `group_status`,
+'' AS `receiver_is_online`,
+'' AS `receiver_is_chat_screen`,
+`receiver`.`is_chat_screen` AS `group_is_chat_screen`,
+'' AS `receiver_is_blocked`,
+'' AS `receiver_blocked_by`,
+`receiver`.`group_profile_image` AS `receiver_profile_image`,
+`receiver`.`group_profile_image` AS `group_profile_image`,
+`receiver`.`total_members` AS `total_members_in_group`
+FROM
+    (
+        (
+            `conversations` `c`
+        INNER JOIN `users` `sender` ON
+            ((`sender`.`id` = `c`.`from_user_id`))
+        )
+    INNER JOIN(
+            `groups` `receiver`
+        INNER JOIN `group_members` `GM` ON
+            ((`receiver`.`id` = `GM`.`group_id`))
+        )
+    ON
+        ((`receiver`.`id` = `c`.`to_user_id`))
+    )
+WHERE
+    (`c`.`is_group_conversation` = '1');
+
+////////////////////////////////////////////////////////
+CREATE OR REPLACE VIEW `combine_messages` AS SELECT
+    `m`.`id` AS `message_id`,
+    `m`.`message` AS `message`,
+    `m`.`type` AS `message_type`,
+    `m`.`is_read` AS `is_read`,
+    `m`.`like_count` AS `message_like_count`,
+    `m`.`created_at` AS `message_created_at`,
+    `m`.`updated_at` AS `message_updated_at`,
+    `sender`.`id` AS `sender_id`,
+    `sender`.`session_id` AS `sender_session_id`,
+    `sender`.`name` AS `sender_name`,
+    `sender`.`is_online` AS `sender_is_online`,
+    `sender`.`is_chat_screen` AS `sender_is_chat_screen`,
+    `sender`.`profile_image` AS `sender_profile_image`,
+    `receiver`.`id` AS `receiver_id`,
+    `receiver`.`session_id` AS `receiver_session_id`,
+    '' AS `group_id`,
+    `receiver`.`name` AS `receiver_name`,
+    '' AS `group_name`,
+    `receiver`.`is_online` AS `receiver_is_online`,
+    '' AS `group_created_by`,
+    `receiver`.`is_chat_screen` AS `receiver_is_chat_screen`,
+    '' AS `total_members`,
+    `receiver`.`profile_image` AS `receiver_profile_image`,
+    '' AS `group_profile_image`,
+    '' AS `group_status`,
+    `c`.`id` AS `conversation_id`,
+    `c`.`is_group_conversation` AS `is_group_conversation`,
+    `c`.`order_by` AS `order_by`
+FROM
+    (
+        (
+            (
+                `messages` `m`
+            INNER JOIN `conversations` `c` ON
+                ((`c`.`id` = `m`.`conversation_id`))
+            )
+        INNER JOIN `users` `sender` ON
+            ((`sender`.`id` = `m`.`from_user_id`))
+        )
+    INNER JOIN `users` `receiver` ON
+        ((`receiver`.`id` = `m`.`to_user_id`))
+    )
+WHERE
+    (`c`.`is_group_conversation` = '0')
+UNION ALL
+SELECT
+    `m`.`id` AS `message_id`,
+    `m`.`message` AS `message`,
+    `m`.`type` AS `message_type`,
+    `m`.`is_read` AS `is_read`,
+    `m`.`like_count` AS `message_like_count`,
+    `m`.`created_at` AS `message_created_at`,
+    `m`.`updated_at` AS `message_updated_at`,
+    `sender`.`id` AS `sender_id`,
+    `sender`.`session_id` AS `sender_session_id`,
+    `sender`.`name` AS `sender_name`,
+    `sender`.`is_online` AS `sender_is_online`,
+    `sender`.`is_chat_screen` AS `sender_is_chat_screen`,
+    `sender`.`profile_image` AS `sender_profile_image`,
+    `g`.`id` AS `receiver_id`,
+    '' AS `receiver_session_id`,
+    `g`.`id` AS `group_id`,
+    `g`.`name` AS `receiver_name`,
+    `g`.`name` AS `group_name`,
+    '' AS `receiver_is_online`,
+    `g`.`created_by` AS `group_created_by`,
+    '' AS `receiver_is_chat_screen`,
+    `g`.`total_members` AS `total_members`,
+    `g`.`group_profile_image` AS `receiver_profile_image`,
+    `g`.`group_profile_image` AS `group_profile_image`,
+    `g`.`status` AS `group_status`,
+    `c`.`id` AS `conversation_id`,
+    `c`.`is_group_conversation` AS `is_group_conversation`,
+    `c`.`order_by` AS `order_by`
+FROM
+    (
+        (
+            (
+                `messages` `m`
+            INNER JOIN `conversations` `c` ON
+                ((`c`.`id` = `m`.`conversation_id`))
+            )
+        INNER JOIN `users` `sender` ON
+            ((`sender`.`id` = `m`.`from_user_id`))
+        )
+    INNER JOIN `groups` `g` ON
+        ((`g`.`id` = `m`.`to_user_id`))
+    )
+WHERE
+    (`c`.`is_group_conversation` = '1');
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+////////////////////////////////////////////////
+var array = ["GFG_1", "Geeks","For","Ge","Geeks", "Computer" ,"Science", "Portal","dfg","fgfdg","ttht"];
+var item = array[Math.floor(Math.random()*array.length)];
+
+//  function random(mn, mx) {
+//             return Math.random() * (mx - mn) + mn;
+//         }
+        
+// var item = array[Math.floor(random(1, 5))-1];
+console.log(item)
+
+https://drive.google.com/drive/folders/1pqR90qFL2UA3b0OBb1FitXEwU93IOoVm
+
+//////////////////////////////////////////
+
+  // const updateValues = (...values) => {
+  //   const newState = values.map((values) => {
+  //     if (values.message_id === 1) {
+  //       setValues ((values)=>( {...values, message_id: {conversation_id:"" }}));
+  //       console.log("updated value",values)
+  //     }
+  //     return values;
+  //   });
+  //   setValues(newState)
+  // };
+
+
+
+
+/////////////////////////////////
+0x9DB4Cef70f8512B16FB444Ded9b558B86641B610
+
+Igvaz7l4dXoXc3In
+dbUser
+
+mySql
+sdi@2020
+
+
+////////////////////////////////
+{
+    // "group_name": "jacky bhai lonawala",
+    "group_id": 26,
+    // "members": "14,8,9,10"
+    "from_user_id":"3",
+    // "to_user_id":"8",
+    "message":"hello form pushpendra to group"
+}
+
+//for process killing:-
+                 lsof -i ${PORT} -t | xargs kill
+
+//USER 5
+id: 16
+1
+pd3ugojk8t
+c9-kwoyxlf1d0vmea62sjpurg8iht4q
+Web
+ketchup keep tone frost despair guess chunk once inside elevator end black
+
+//USER 6
+id:17
+2
+6iesxfqocz
+hugt68j7my24czaqk9-nvb3lwfrdo1i
+Android
+tone champ impact elevating and guess tonned frosting despair jungle morning men
+
+group_id: 30
+members:17 and 16
+
+var array = [
+    {"id":1, "name": "hello"},
+        {"id":2, "name": "helfdflo"},
+            {"id":3, "name": "hellsdso"},
+                {"id":4, "name": "hefdfllo"}
+    ]
+
+// var result=array.map((e)=>e.name)   
+// console.log(result)
+    // var print = array.filter((e)=>{
+    //     return e.name;
+    // })
+    // console.log(print)
+    
+// var result = array.map(print)
+// console.log(result)
+// function print(e) {
+// //   return [` "name" : "${e.name}"`]
+//   return [e.name]
+// }
+var print
+
+
+
+///////
+///////////////////
+//safe3chat:-
+http://testing.semidotinfotech.com:5002?device_token=5769a83c-5baf-3c2b-b6c4-ccbb45828dd0&device_type=Android&user_id=13
+
+//safe3chat
+http://192.168.29.75:5002?device_token=5769a83c-5baf-3c2b-b6c4-ccbb45828dd0&device_type=Android&user_id=6
+
+
+//User 1
+user_id: 12
+session_id: J9ZWFI40E8
+device_token : kijzv5wu2-a3i6x2xzrjqkxy-2y7gn3
+device_type : Android
+recovery_phrase : ketchup keep tone frost despair guess chunk once inside elevator end black
+group_id : 22
+
+//USER 2
+user_id: 13
+session_id: X7KAHQL8SB
+device_token : hxh9596m-cv1hr8j4pbf-tj2dqlz37iu
+device_type : ios
+recovery_phrase :entry episode impact scorpion always morning climb allow coach jungle between unveil
+
+//USER 3
+user_id: 14
+session_id: HVJTUY4GAR
+device_token : nvd84xxyy-diw4k3g1gz-elle38kmk3f
+device_type : Android
+recovery_phrase : tone chunk impact elevator end guess tone frost despair  jungle morning climb
+
+
+//USER 4 
+ "user_id": 15,
+ "session_id": "udq20g1ghz",
+ "device_token": "b6q1lkoh8pdmr0xisg2yavu37njz9e",
+ "device_type": "IOS",
+ "recovery_phrase": "Mashup bone appear bass frontal bunk outside sheep always generator and yellow"
+
+group_id:28 with all members 12.13.14 and owner 15 
+group_name:"Group Test"
+
+Semidot@123
+//////////////////////////////////////////
+
+fcm token user id: 17 Android
+f1gafQJV_EQmWFlzcjbu0U:APA91bElAEBTaAsM55IkAZpkZfsYek7hWGs41DijtC-nbyYjbwPmBwwaXN5JgQ4wRjK34uN9bXNBLVlZ3R420iXm9w2ngSHDse3WRBpyjRLWiutEEkLv_CAKDUBFXg3ZexQal-sDZ6_N
+
+fcm token user id: 13 IOS
+f1gafQJV_EQmWFlzcjbu0U:APA91bElAEBTaAsM55IkAZpkZfsYek7hWGs41DijtC-nbyYjbwPmBwwaXN5JgQ4wRjK34uN9bXNBLVlZ3R420iXm9w2ngSHDse3WRBpyjRLWiutEEkLv_CAKDUBFXg3ZexQal-sDZ6_N

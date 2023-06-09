@@ -1,0 +1,22 @@
+//Trigger Name: update_total_count_after_delete
+//Table: group_members
+//Time: AFTER
+//Event: DELETE
+
+CREATE TRIGGER `update_total_count_after_delete` AFTER DELETE ON `group_members`
+ FOR EACH ROW BEGIN
+DECLARE totalCount integer;
+select count(id) INTO totalCount from `group_members` where group_id=OLD.group_id;
+update `groups` set total_members=totalCount where id=OLD.group_id;
+END
+
+//Trigger Name: update_total_count_after_insert
+//Table: group_members
+//Time: AFTER
+//Event: INSERT
+
+CREATE TRIGGER `update_total_count_after_insert` AFTER INSERT ON `group_members`
+ FOR EACH ROW BEGIN 
+DECLARE totalCount integer; select count(id) INTO totalCount from `group_members` where group_id=NEW.group_id;
+update `groups` set total_members=totalCount where id=NEW.group_id; 
+END
