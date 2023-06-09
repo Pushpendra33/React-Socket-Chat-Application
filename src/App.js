@@ -152,7 +152,7 @@ const App = () => {
 
     getToken(messaging, {
       vapidKey:
-        "BMk52kx2-Z4dvMCH_DiJf7juVHPi3GQRN8t4yC7TERY98T7VF_YE1xnJGPYhM59a1wMg5YkNCrTUvk9mGnh4MDY",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     }).then((currentToken) => {
       setFcmToken(currentToken);
       console.log("currentToken", currentToken);
